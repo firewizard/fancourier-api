@@ -1,0 +1,21 @@
+{
+    "name": "firewizard/fancourier-api",
+    "description": "Consumer for FanCourier API",
+    "authors": [
+        {
+            "name": "Cristian Nicolescu",
+            "email": "cristi@mandagreen.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.0",
+        "ext-curl": "*"
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fancourier\\": "src"
+        }
+    }
+}
