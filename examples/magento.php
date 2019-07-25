@@ -7,7 +7,7 @@ Mage::app()->getConfig();
 //since magento 1 has its own autoloader, this PSR-4 approach won't work. 
 //just include the autoload file and you should be good to go
 
-require_once 'lib/fancourier-api/src/autoload.php';
+require_once 'fancourier-api/src/autoload.php';
 
 
 $fan = Fancourier\Fancourier::testInstance();
