@@ -46,6 +46,13 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     protected $tempDir = '/tmp';
 
+    const OPTION_EPOD = 1;
+    const OPTION_OPOD = 2;
+    const OPTION_OPEN = 4;
+    const OPTION_FANHQ = 8;
+
+    protected $options = 0;
+
     public function __construct()
     {
         parent::__construct();
@@ -106,13 +113,15 @@ class CreateAwb extends AbstractRequest implements RequestInterface
             'Height of packet' => $this->height,
             'Width of packet' => $this->length,
             'Lenght of packet' => $this->width,
+            'refund' => '',
             'cost_center' => '',
+            'options' => $this->packOptions(),
             'packing' => '',
             'recipient_info' => '',
         ];
 
         //need to write temporary csv
-        $file = tempnam($this->getTempDir(), 'fc' . md5(json_encode($data)));
+        $file = @tempnam($this->getTempDir(), 'fc' . md5(json_encode($data)));
 
         if (false !== $f = fopen($file, 'w')) {
             fputcsv($f, array_keys($data)); //',', chr(0)
@@ -679,6 +688,54 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     public function setTempDir($tempDir)
     {
         $this->tempDir = $tempDir;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function packOptions()
+    {
+        $opts = [];
+
+        if ($this->getOptions() & static::OPTION_EPOD) {
+            $opts[] = 'ePOD';
+        }
+
+        if ($this->getOptions() & static::OPTION_OPOD) {
+            $opts[] = 'oPOD';
+        }
+
+        if ($this->getOptions() & static::OPTION_OPEN) {
+            $opts[] = 'Deschidere la livrare';
+        }
+
+        if ($this->getOptions() & static::OPTION_FANHQ) {
+            $opts[] = 'Livrare sediu FAN';
+        }
+
+        return count($opts) ? implode('/', $opts) : '';
+    }
+
+    /**
+     * @return int
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param $opts
+     * @return $this
+     */
+    public function setOptions($opts)
+    {
+        if (!is_numeric($opts)) {
+            return $this;
+        }
+
+        $this->options = $opts;
         return $this;
     }
 }
