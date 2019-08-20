@@ -90,6 +90,8 @@ abstract class AbstractRequest implements RequestInterface
      */
     protected function packOptions($options)
     {
+        $options = (int)$options;
+        
         $opts = [];
         if ($options & static::OPTION_EPOD) {
             $opts[] = "X"; //'ePOD';
