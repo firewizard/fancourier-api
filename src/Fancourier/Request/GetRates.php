@@ -42,7 +42,7 @@ class GetRates extends AbstractRequest implements RequestInterface
             'inaltime' => $this->height,
             'val_decl' => $this->declaredValue,
             'plata_ramburs' => $this->reimbursementPaymentType,
-            'optiuni' => $this->options,
+            'options' => $this->packOptions($this->getOptions()),
             'serviciu' => $this->service,
         ];
     }
@@ -285,10 +285,6 @@ class GetRates extends AbstractRequest implements RequestInterface
      */
     public function setService($service)
     {
-        if ($service != self::SERVICE_STANDARD) {
-            throw new \InvalidArgumentException("Invalid service value");
-        }
-
         $this->service = $service;
         return $this;
     }

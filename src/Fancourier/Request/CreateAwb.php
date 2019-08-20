@@ -46,11 +46,6 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     protected $tempDir = '/tmp';
 
-    const OPTION_EPOD = 1;
-    const OPTION_OPOD = 2;
-    const OPTION_OPEN = 4;
-    const OPTION_FANHQ = 8;
-
     protected $options = 0;
 
     public function __construct()
@@ -115,7 +110,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
             'Lenght of packet' => $this->width,
             'refund' => '',
             'cost_center' => '',
-            'options' => $this->packOptions(),
+            'options' => $this->packOptions($this->getOptions()),
             'packing' => '',
             'recipient_info' => '',
         ];
@@ -689,32 +684,6 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     {
         $this->tempDir = $tempDir;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    protected function packOptions()
-    {
-        $opts = [];
-
-        if ($this->getOptions() & static::OPTION_EPOD) {
-            $opts[] = 'ePOD';
-        }
-
-        if ($this->getOptions() & static::OPTION_OPOD) {
-            $opts[] = 'oPOD';
-        }
-
-        if ($this->getOptions() & static::OPTION_OPEN) {
-            $opts[] = 'Deschidere la livrare';
-        }
-
-        if ($this->getOptions() & static::OPTION_FANHQ) {
-            $opts[] = 'Livrare sediu FAN';
-        }
-
-        return count($opts) ? implode('/', $opts) : '';
     }
 
     /**
