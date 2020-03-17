@@ -24,7 +24,8 @@ class CreateAwb extends Generic implements ResponseInterface
             return $this;
         }
 
-        $this->setErrorMessage(empty($body[2]) ? '' : $body[2]);
+        $message = trim(($body[2] ?? '') . (!empty($body[3]) ? " ({$body[3]})" : ""));
+        $this->setErrorMessage($message);
         $this->setErrorCode(-2);
 
         return $this;
