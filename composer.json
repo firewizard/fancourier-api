@@ -18,12 +18,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Fancourier\\": "src/"
+            "Fancourier\\": "src/Fancourier/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Fancourier\\": "src/Fancourier/",
             "Fancourier\\Tests\\": "tests/"
         }
     }

@@ -7,7 +7,7 @@ class PrintAwb extends AbstractRequest implements RequestInterface
     protected $verb = 'view_awb_integrat_pdf.php';
 
     private $awb;
-    private $pageSize = 'A4';
+    private $pageSize = 'A6';
     private $label;
     private $lang = 'ro';
 
@@ -55,7 +55,7 @@ class PrintAwb extends AbstractRequest implements RequestInterface
     {
         $pageSize = strtoupper($pageSize);
         if (!in_array($pageSize, ['A4', 'A5', 'A6'])) {
-            $pageSize = 'A4';
+            $pageSize = 'A6';
         }
 
         $this->pageSize = $pageSize;
