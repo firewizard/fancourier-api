@@ -14,6 +14,7 @@
     - <a href="#print-awb-html">Print AWB Html</a>
     - <a href="#delete-awb">Delete AWB</a>
     - <a href="#track-awb-in-bulk">Track awb in bulk</a>
+    - <a href="#get-cities">Get cities</a>
 - <a href="#contributing">Contributing</a>
 - <a href="#license">License</a>
 
@@ -173,6 +174,19 @@ $request->setAwbs(['2162900120047']);
 Response
 ```php
 $response = $fan->trackAwbBulk($request);
+if ($response->isOk()) {
+    print_r($response->getBody());
+} else {
+    var_dump("ERROR: " . $response->getErrorMessage());
+}
+```
+
+### Get cities
+Request - There's no request for this method
+
+Response - will return an array of cities (and other info)
+```php
+$response = $fan->getCities();
 if ($response->isOk()) {
     print_r($response->getBody());
 } else {

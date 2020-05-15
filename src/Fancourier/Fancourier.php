@@ -4,6 +4,7 @@ namespace Fancourier;
 
 use Fancourier\Request\CreateAwb;
 use Fancourier\Request\DeleteAwb;
+use Fancourier\Request\GetCities;
 use Fancourier\Request\GetRates;
 use Fancourier\Request\PrintAwb;
 use Fancourier\Request\PrintAwbHtml;
@@ -26,36 +27,64 @@ class Fancourier
         $this->auth = new Auth($clientId, $username, $password);
     }
 
+    /**
+     * @param CreateAwb $request
+     * @return \Fancourier\Response\CreateAwb
+     */
     public function createAwb(CreateAwb $request)
     {
         return $this->send($request);
     }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\Generic
+     */
     public function printAwb(PrintAwb $request)
     {
         return $this->send($request);
     }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\Generic
+     */
     public function printAwbHtml(PrintAwbHtml $request)
     {
         return $this->send($request);
     }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\DeleteAwb
+     */
     public function deleteAwb(DeleteAwb $request)
     {
         return $this->send($request);
     }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\Generic
+     */
     public function trackAwb(TrackAwb $request)
     {
         return $this->send($request);
     }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\TrackAwbBulk
+     */
     public function trackAwbBulk(TrackAwbBulk $request)
     {
         return $this->send($request);
     }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\GetRates
+     */
     public function getRates(GetRates $request)
     {
         return $this->send($request);
@@ -66,6 +95,19 @@ class Fancourier
 //        todo implement return $this->send($request);
 //    }
 
+    /**
+     * @param PrintAwb $request
+     * @return \Fancourier\Response\GetCities
+     */
+    public function getCities()
+    {
+        return $this->send(new GetCities());
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return \Fancourier\Response\ResponseInterface
+     */
     protected function send(RequestInterface $request)
     {
         return $request

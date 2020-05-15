@@ -12,6 +12,16 @@ require_once 'fancourier-api/src/autoload.php';
 
 $fan = Fancourier\Fancourier::testInstance();
 
+//---- get cities list ----
+//$response = $fan->getCities();
+//if ($response->isOk()) {
+//    print_r($response->getBody());
+//} else {
+//    print_r($response->getErrorMessage());
+//}
+//die;
+// ----
+
 //---- get estimated shipping cost ----
 //$request = new Fancourier\Request\GetRates();
 //$request

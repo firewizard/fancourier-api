@@ -15,11 +15,6 @@ class TrackAwb extends AbstractRequest implements RequestInterface
     protected $awb;
     protected $displayMode = self::MODE_FULL;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function pack()
     {
         return [
