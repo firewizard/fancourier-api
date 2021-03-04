@@ -61,7 +61,7 @@ class GetRates extends AbstractRequest implements RequestInterface
      */
     public function setPaymentType($paymentType)
     {
-        if ($paymentType != self::TYPE_RECIPIENT || $paymentType != self::TYPE_SENDER) {
+        if ($paymentType != self::TYPE_RECIPIENT && $paymentType != self::TYPE_SENDER) {
             throw new \InvalidArgumentException("Invalid paymentType value");
         }
 
@@ -245,7 +245,7 @@ class GetRates extends AbstractRequest implements RequestInterface
      */
     public function setReimbursementPaymentType($type)
     {
-        if ($type != self::TYPE_RECIPIENT || $type != self::TYPE_SENDER) {
+        if ($type != self::TYPE_RECIPIENT && $type != self::TYPE_SENDER) {
             throw new \InvalidArgumentException("Invalid reimbursementPaymentType value");
         }
 
