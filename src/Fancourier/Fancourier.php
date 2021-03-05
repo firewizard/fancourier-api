@@ -3,6 +3,7 @@
 namespace Fancourier;
 
 use Fancourier\Request\CreateAwb;
+use Fancourier\Request\CreateAwbBulk;
 use Fancourier\Request\DeleteAwb;
 use Fancourier\Request\GetCities;
 use Fancourier\Request\GetRates;
@@ -32,6 +33,15 @@ class Fancourier
      * @return \Fancourier\Response\CreateAwb
      */
     public function createAwb(CreateAwb $request)
+    {
+        return $this->send($request);
+    }
+
+    /**
+     * @param CreateAwbBulk $request
+     * @return \Fancourier\Response\CreateAwbBulk
+     */
+    public function createAwbBulk(CreateAwbBulk $request)
     {
         return $this->send($request);
     }

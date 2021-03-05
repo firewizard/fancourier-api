@@ -10,12 +10,15 @@ require_once __DIR__ . '/Fancourier/Request/RequestInterface.php';
 require_once __DIR__ . '/Fancourier/Request/AbstractRequest.php';
 
 require_once __DIR__ . '/Fancourier/Response/CreateAwb.php';
+require_once __DIR__ . '/Fancourier/Response/CreateAwbBulk.php';
 require_once __DIR__ . '/Fancourier/Response/DeleteAwb.php';
 require_once __DIR__ . '/Fancourier/Response/GetCities.php';
 require_once __DIR__ . '/Fancourier/Response/GetRates.php';
 require_once __DIR__ . '/Fancourier/Response/TrackAwbBulk.php';
 
+require_once __DIR__ . '/Fancourier/Request/Traits/SendsFile.php';
 require_once __DIR__ . '/Fancourier/Request/CreateAwb.php';
+require_once __DIR__ . '/Fancourier/Request/CreateAwbBulk.php';
 require_once __DIR__ . '/Fancourier/Request/DeleteAwb.php';
 require_once __DIR__ . '/Fancourier/Request/GetCities.php';
 require_once __DIR__ . '/Fancourier/Request/GetRates.php';

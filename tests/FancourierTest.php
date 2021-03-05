@@ -3,6 +3,7 @@
 namespace Fancourier\Tests;
 
 use Fancourier\Request\CreateAwb;
+use Fancourier\Request\CreateAwbBulk;
 use Fancourier\Request\DeleteAwb;
 use Fancourier\Request\PrintAwb;
 use Fancourier\Request\PrintAwbHtml;
@@ -14,7 +15,6 @@ use Fancourier\Request\GetRates;
 
 class FancourierTest extends TestCase
 {
-
     public $fan;
 
     public function __construct($name = null, array $data = [], $dataName = '')
@@ -65,11 +65,56 @@ class FancourierTest extends TestCase
     }
 
     /** @test */
+    public function it_can_create_awb_in_bulk()
+    {
+        $batchRequest = new CreateAwbBulk();
+        $request = new CreateAwb();
+        $request
+            ->setParcels(1)
+            ->setWeight(2)
+            ->setReimbursement(125)
+            ->setDeclaredValue(125)
+            ->setNotes('testing notes')
+            ->setContents('SKU-1, SKU-2')
+            ->setRecipient("John Ivy")
+            ->setPhone('0723000000')
+            ->setRegion('Arad')
+            ->setCity('Aciuta')
+            ->setStreet('Str Lunga nr 1')
+        ;
+        $batchRequest->append($request);
+
+        $request
+            ->setParcels(1)
+            ->setWeight(1.5)
+            ->setReimbursement(50)
+            ->setDeclaredValue(50)
+            ->setContents('SKU-7')
+            ->setRecipient("Tester Testerson")
+            ->setPhone('0722111000')
+            ->setRegion('Sibiu')
+            ->setCity('Sibiu')
+            ->setStreet('Calea Bucuresti nr 1')
+        ;
+        $batchRequest->append($request);
+
+        $response = $this->fan->createAwbBulk($batchRequest);
+
+        $this->assertTrue($response->isOk());
+        $this->assertIsArray($response->getBody());
+        $this->assertCount(2, $response->getBody());
+        foreach ($response->getBody() as $line) {
+            $this->assertTrue($line->isOk());
+            $this->assertIsString($line->getBody());
+        }
+    }
+
+    /** @test */
     public function it_can_track_an_existing_awb()
     {
         $request = new TrackAwb();
         $request
-            ->setAwb('2150900120086')
+            ->setAwb('2064100120143')
             ->setDisplayMode(TrackAwb::MODE_LAST_STATUS);
 
         $response = $this->fan->trackAwb($request);
@@ -82,7 +127,7 @@ class FancourierTest extends TestCase
     public function it_can_get_a_printable_pdf_awb()
     {
         $request = new PrintAwb();
-        $request->setAwb('2150900120086');
+        $request->setAwb('2064100120143');
 
         $response = $this->fan->printAwb($request);
 
@@ -94,7 +139,7 @@ class FancourierTest extends TestCase
     public function is_can_get_a_html_version_for_an_awb()
     {
         $request = new PrintAwbHtml();
-        $request->setAwb('2150900120086');
+        $request->setAwb('2064100120143');
 
         $response = $this->fan->printAwbHtml($request);
 
@@ -106,8 +151,24 @@ class FancourierTest extends TestCase
     /** @test */
     public function it_can_delete_an_existing_awb()
     {
+        $request = new CreateAwb();
+        $request
+            ->setParcels(1)
+            ->setWeight(2)
+            ->setReimbursement(125)
+            ->setDeclaredValue(125)
+            ->setNotes('testing notes')
+            ->setContents('SKU-1, SKU-2')
+            ->setRecipient("John Ivy")
+            ->setPhone('0723000000')
+            ->setRegion('Arad')
+            ->setCity('Aciuta')
+            ->setStreet('Str Lunga nr 1');
+
+        $response = $this->fan->createAwb($request);
+
         $request = new DeleteAwb();
-        $request->setAwb('2150900120086');
+        $request->setAwb($response->getBody());
 
         $response = $this->fan->deleteAwb($request);
 
@@ -120,7 +181,7 @@ class FancourierTest extends TestCase
     public function it_can_track_multiple_aws_in_bulk()
     {
         $request = new TrackAwbBulk();
-        $request->setAwbs(['2162900120047']);
+        $request->setAwbs(['2064100120143']);
 
         $response = $this->fan->trackAwbBulk($request);
 

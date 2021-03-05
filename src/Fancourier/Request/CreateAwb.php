@@ -2,6 +2,7 @@
 
 namespace Fancourier\Request;
 
+use Fancourier\Request\Traits\SendsFile;
 use Fancourier\Response\CreateAwb as CreateAwbResponse;
 
 /**
@@ -11,6 +12,8 @@ use Fancourier\Response\CreateAwb as CreateAwbResponse;
  */
 class CreateAwb extends AbstractRequest implements RequestInterface
 {
+    use SendsFile;
+
     protected $verb = 'import_awb_integrat.php';
 
     protected $service = self::SERVICE_STANDARD;
@@ -43,8 +46,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     protected $height = 0;
     protected $length = 0;
     protected $width = 0;
-
-    protected $tempDir = '/tmp';
+    protected $restitution = '';
 
     protected $options = 0;
 
@@ -54,30 +56,9 @@ class CreateAwb extends AbstractRequest implements RequestInterface
         $this->response = new CreateAwbResponse();
     }
 
-    public function send()
+    public function getData()
     {
-        if (empty($this->verb)) {
-            throw new \DomainException("No request verb implemented");
-        }
-
-        $file = $this->pack();
-        $data = ['fisier' => new \CURLFile($file, 'text/csv', 'fisier.csv')] + $this->auth->pack();
-
-        $responseString = $this->client->post($this->endpoint . $this->verb, $data);
-        if (false === $responseString) {
-            $this->response->setErrorCode(-1)->setErrorMessage($this->client->getError());
-        } else {
-            $this->response->setBody($responseString);
-        }
-
-        unlink($file);
-
-        return $this->response;
-    }
-
-    public function pack()
-    {
-        $data = [
+        return [
             'Type of service' => $this->service,
             'Bank' => $this->bank,
             'IBAN' => $this->iban,
@@ -108,12 +89,17 @@ class CreateAwb extends AbstractRequest implements RequestInterface
             'Height of packet' => $this->height,
             'Width of packet' => $this->length,
             'Lenght of packet' => $this->width,
-            'refund' => '',
+            'refund' => $this->restitution,
             'cost_center' => '',
             'options' => $this->packOptions($this->getOptions()),
             'packing' => '',
             'recipient_info' => '',
         ];
+    }
+
+    public function pack()
+    {
+        $data = $this->getData();
 
         //need to write temporary csv
         $file = @tempnam($this->getTempDir(), 'fc' . md5(json_encode($data)));
@@ -671,18 +657,18 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @return string
      */
-    public function getTempDir()
+    public function getRestitution()
     {
-        return $this->tempDir;
+        return $this->restitution;
     }
 
     /**
-     * @param string $tempDir
+     * @param string $restitution
      * @return CreateAwb
      */
-    public function setTempDir($tempDir)
+    public function setRestitution(string $restitution)
     {
-        $this->tempDir = $tempDir;
+        $this->restitution = $restitution;
         return $this;
     }
 
