@@ -11,10 +11,14 @@ class GetRates extends Generic implements ResponseInterface
             return $this;
         }
 
-        preg_match('/(.*?)\((\d+)\)/', $body, $matches);
-        $this->setErrorMessage($matches[1]);
-        $this->setErrorCode($matches[2] ?: -1);
-
+        $this->setErrorMessage('Unknown error');
+        $this->setErrorCode(-1);
+        
+        if (preg_match('/(.*?)\((\d+)\)/', $body, $matches)) {
+            $this->setErrorMessage($matches[1] ?: 'Unknown error');
+            $this->setErrorCode($matches[2]);
+        }
+        
         return $this;
     }
 }
