@@ -12,22 +12,20 @@ class CreateAwb extends Generic implements ResponseInterface
             return $this;
         }
 
-        $body = str_getcsv($body);
-        if (count($body) == 1) {
-            $this->setErrorMessage($body[0]);
-            $this->setErrorCode(0);
+        $body = json_decode($body, true);
+        if (empty($body['response'][0])) {
+            $this->setErrorMessage("Invalid response");
+            $this->setErrorCode(-2);
             return $this;
         }
 
-        if ($body[1] && !empty($body[2])) {
-            parent::setBody($body[2]);
+        if (empty($body['response'][0]['awbNumber'])) {
+            $this->setErrorMessage(implode('; ', $body['response'][0]['errors'] ?? ['Unknown error']));
+            $this->setErrorCode(-3);
             return $this;
         }
 
-        $message = trim(($body[2] ?? '') . (!empty($body[3]) ? " ({$body[3]})" : ""));
-        $this->setErrorMessage($message);
-        $this->setErrorCode(-2);
-
+        parent::setBody($body['response'][0]['awbNumber']);
         return $this;
     }
 }

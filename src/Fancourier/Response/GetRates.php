@@ -6,19 +6,24 @@ class GetRates extends Generic implements ResponseInterface
 {
     public function setBody($body)
     {
-        if (is_numeric($body)) {
-            parent::setBody($body);
-            return $this;
+        if (empty($body)) {
+            $this->setErrorMessage('Unknown error');
+            $this->setErrorCode(-1);
         }
 
-        $this->setErrorMessage('Unknown error');
-        $this->setErrorCode(-1);
-        
-        if (preg_match('/(.*?)\((\d+)\)/', $body, $matches)) {
-            $this->setErrorMessage($matches[1] ?: 'Unknown error');
-            $this->setErrorCode($matches[2]);
+        $body = json_decode($body, true);
+        if ('success' != ($body['status'] ?? null)) {
+            $this->setErrorMessage($body['message'] ?? 'Invalid response');
+            $this->setErrorCode(-2);
         }
-        
+
+        if (empty($body['data']['total'])) {
+            $this->setErrorMessage('Invalid response, missing total amount');
+            $this->setErrorCode(-3);
+        }
+
+        parent::setBody($body['data']['total']);
+
         return $this;
     }
 }

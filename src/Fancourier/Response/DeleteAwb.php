@@ -12,13 +12,14 @@ class DeleteAwb extends Generic implements ResponseInterface
             return $this;
         }
 
-        if (preg_match('/(.*?) DELETED/', $body)) {
-            parent::setBody(true);
+        $body = json_decode($body, true);
+        if (empty($body['status']) || 'success' != $body['status']) {
+            $this->setErrorMessage("Error deleting AWB");
+            $this->setErrorCode(-2);
             return $this;
         }
 
-        $this->setErrorMessage($body);
-        $this->setErrorCode(-2);
+        parent::setBody(true);
         return $this;
     }
 }

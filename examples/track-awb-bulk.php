@@ -7,7 +7,7 @@ require_once '../src/autoload.php';
 $fan = Fancourier\Fancourier::testInstance();
 
 $request = new Fancourier\Request\TrackAwbBulk();
-$request->setAwbs(['2162900120047']);
+$request->setAwbs(['2060400120536', '2060400120537']);
 
 $response = $fan->trackAwbBulk($request);
 if ($response->isOk()) {

@@ -6,7 +6,8 @@ use Fancourier\Response\GetRates as GetRatesResponse;
 
 class GetRates extends AbstractRequest implements RequestInterface
 {
-    protected $verb = 'tarif.php';
+    protected $resource = 'reports/awb/internal-tariff';
+    protected $verb = 'get';
 
     private $paymentType = self::TYPE_RECIPIENT;
     private $city;
@@ -31,19 +32,30 @@ class GetRates extends AbstractRequest implements RequestInterface
     public function pack()
     {
         return [
-            'plata_la' => $this->paymentType,
-            'localitate_dest' => $this->city,
-            'judet_dest' => $this->region,
-            'plicuri' => $this->envelopes,
-            'colete' => $this->parcels,
-            'greutate' => $this->weight,
-            'lungime' => $this->length,
-            'latime' => $this->width,
-            'inaltime' => $this->height,
-            'val_decl' => $this->declaredValue,
-            'plata_ramburs' => $this->reimbursementPaymentType,
-            'options' => $this->packOptions($this->getOptions()),
-            'serviciu' => $this->service,
+            'info' => [
+                'service' => $this->service,
+                'payment' => $this->paymentType,
+                'weight' => $this->weight,
+                'options' => $this->packOptions($this->getOptions()),
+                'dimensions' => [
+                    'length' => $this->length,
+                    'width' => $this->width,
+                    'height' => $this->height,
+                ],
+                'packages' => [
+                    'parcel' => $this->parcels,
+                    'envelope' => $this->envelopes,
+                ],
+                'declaredValue' => $this->declaredValue,
+            ],
+            'recipient' => [
+                'locality' => $this->city,
+                'county' => $this->region,
+            ],
+            'sender' => [
+                'locality' => null,
+                'county' => null,
+            ],
         ];
     }
 
@@ -233,6 +245,7 @@ class GetRates extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getReimbursementPaymentType()
     {
@@ -242,6 +255,7 @@ class GetRates extends AbstractRequest implements RequestInterface
     /**
      * @param string $type
      * @return GetRates
+     * @deprecated
      */
     public function setReimbursementPaymentType($type)
     {

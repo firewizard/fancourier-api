@@ -8,10 +8,10 @@ $fan = Fancourier\Fancourier::testInstance();
 
 $request = new Fancourier\Request\TrackAwb();
 $request
-    ->setAwb('2150900120086')
+    ->setAwb('2060400120378')
     ->setDisplayMode(Fancourier\Request\TrackAwb::MODE_LAST_STATUS)
     ;
 
 $response = $fan->trackAwb($request);
 
-var_dump($response->isOk() ? $response->getBody() : $response->getErrorMessage());
+print_r($response->isOk() ? $response->getBody() : $response->getErrorMessage());

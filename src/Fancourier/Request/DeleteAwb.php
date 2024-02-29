@@ -6,7 +6,8 @@ use Fancourier\Response\DeleteAwb as DeleteAwbResponse;
 
 class DeleteAwb extends AbstractRequest implements RequestInterface
 {
-    protected $verb = 'delete_awb_integrat.php';
+    protected $resource = 'awb';
+    protected $verb = 'delete';
 
     private $awb;
 
@@ -18,7 +19,7 @@ class DeleteAwb extends AbstractRequest implements RequestInterface
 
     public function pack()
     {
-        return ['AWB' => $this->awb];
+        return ['awb' => $this->awb];
     }
 
     /**

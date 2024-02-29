@@ -7,11 +7,11 @@ require_once '../src/autoload.php';
 $fan = Fancourier\Fancourier::testInstance();
 
 $request = new Fancourier\Request\PrintAwb();
-$request->setAwb('2150900120086');
+$request->setAwb('2060400120378');
 
 $response = $fan->printAwb($request);
 if ($response->isOk()) {
-    echo $response->getBody();
+    file_put_contents('awb.pdf', $response->getBody());
 } else {
     var_dump($response->getErrorMessage());
 }

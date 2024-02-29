@@ -6,16 +6,23 @@ use Fancourier\Response\GetCities as GetCitiesResponse;
 
 class GetCities extends AbstractRequest implements RequestInterface
 {
-    protected $verb = 'export_distante_integrat.php';
+    protected $resource = 'reports/localities';
+    protected $verb = 'get';
 
-    public function __construct()
+    protected $county;
+
+    public function __construct($county = null)
     {
         parent::__construct();
         $this->response = new GetCitiesResponse();
+
+        if ($county) {
+            $this->county = $county;
+        }
     }
 
     public function pack()
     {
-        return [];
+        return array_filter(['county' => $this->county]);
     }
 }

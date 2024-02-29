@@ -6,10 +6,12 @@ use Fancourier\Request\CreateAwb;
 use Fancourier\Request\CreateAwbBulk;
 use Fancourier\Request\DeleteAwb;
 use Fancourier\Request\GetCities;
+use Fancourier\Request\GetCounties;
 use Fancourier\Request\GetRates;
+use Fancourier\Request\GetServices;
 use Fancourier\Request\PrintAwb;
 use Fancourier\Request\PrintAwbHtml;
-use Fancourier\Request\RequestCourier;
+//use Fancourier\Request\RequestCourier;
 use Fancourier\Request\RequestInterface;
 use Fancourier\Request\TrackAwb;
 use Fancourier\Request\TrackAwbBulk;
@@ -20,12 +22,15 @@ class Fancourier
     const TEST_USERNAME = 'clienttest';
     const TEST_PASSWORD = 'testing';
 
-    /** @var Auth */
-    protected $auth;
+    private $clientId;
+    private $username;
+    private $password;
 
     public function __construct($clientId, $username, $password)
     {
-        $this->auth = new Auth($clientId, $username, $password);
+        $this->clientId = $clientId;
+        $this->username = $username;
+        $this->password = $password;
     }
 
     /**
@@ -109,9 +114,27 @@ class Fancourier
      * @param PrintAwb $request
      * @return \Fancourier\Response\GetCities
      */
-    public function getCities()
+    public function getCities($county = null)
     {
-        return $this->send(new GetCities());
+        return $this->send(new GetCities($county));
+    }
+
+    /**
+     * @return Response\ResponseInterface
+     */
+    public function getCounties()
+    {
+        return $this->send(new GetCounties());
+    }
+
+    public function getStreets()
+    {
+        //todo
+    }
+
+    public function getServices()
+    {
+        return $this->send(new GetServices());
     }
 
     /**
@@ -120,9 +143,7 @@ class Fancourier
      */
     protected function send(RequestInterface $request)
     {
-        return $request
-            ->authenticate($this->auth)
-            ->send();
+        return $request->send($this->username, $this->password, $this->clientId);
     }
 
     public static function testInstance()

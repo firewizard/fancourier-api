@@ -7,7 +7,7 @@ require_once '../src/autoload.php';
 $fan = Fancourier\Fancourier::testInstance();
 
 $request = new Fancourier\Request\PrintAwbHtml();
-$request->setAwb('2150900120086');
+$request->setAwb('2060400120378');
 
 $response = $fan->printAwbHtml($request);
 if ($response->isOk()) {

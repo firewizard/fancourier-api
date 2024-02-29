@@ -21,8 +21,7 @@ $request
     ->setPhone('0723000000')
     ->setRegion('Arad')
     ->setCity('Aciuta')
-    ->setStreet('Str Lunga nr 1')
-;
+    ->setStreet('Str Lunga nr 1');
 $batchRequest->append($request);
 
 $request
@@ -35,8 +34,7 @@ $request
     ->setPhone('0722111000')
     ->setRegion('Sibiu')
     ->setCity('Sibiu')
-    ->setStreet('Calea Bucuresti nr 1')
-;
+    ->setStreet('Calea Bucuresti nr 1');
 $batchRequest->append($request);
 
 $response = $fan->createAwbBulk($batchRequest);
@@ -45,12 +43,6 @@ if (!$response->isOk()) {
     die($response->getErrorMessage());
 }
 
-foreach ($response->getBody() as $lineResponse) {
-    /** @var CreateAwb $lineResponse */
-
-    if ($lineResponse->isOk()) {
-        echo $lineResponse->getBody() . "\n";
-    } else {
-        echo $lineResponse->getErrorMessage() . "\n";
-    }
+foreach ($response->getBody() as $awb) {
+    echo $awb . "\n";
 }

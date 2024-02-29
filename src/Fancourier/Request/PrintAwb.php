@@ -4,19 +4,21 @@ namespace Fancourier\Request;
 
 class PrintAwb extends AbstractRequest implements RequestInterface
 {
-    protected $verb = 'view_awb_integrat_pdf.php';
+    protected $resource = 'awb/label';
+    protected $verb = 'get';
 
     private $awb;
     private $pageSize = 'A6';
     private $label;
+    private $pdf = true;
+
     private $lang = 'ro';
 
     public function pack()
     {
         return [
-            'nr' => $this->awb,
-            'page' => $this->pageSize,
-            'label' => $this->label,
+            'awbs' => is_array($this->awb) ? $this->awb : [$this->awb],
+            'pdf' => $this->pdf,
             'language' => $this->lang,
         ];
     }
@@ -41,6 +43,7 @@ class PrintAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getPageSize()
     {
@@ -50,6 +53,7 @@ class PrintAwb extends AbstractRequest implements RequestInterface
     /**
      * @param string $pageSize
      * @return PrintAwb
+     * @deprecated
      */
     public function setPageSize($pageSize)
     {
@@ -64,6 +68,7 @@ class PrintAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return mixed
+     * @deprecated
      */
     public function getLabel()
     {
@@ -73,6 +78,7 @@ class PrintAwb extends AbstractRequest implements RequestInterface
     /**
      * @param mixed $label
      * @return PrintAwb
+     * @deprecated
      */
     public function setLabel($label)
     {
@@ -100,6 +106,24 @@ class PrintAwb extends AbstractRequest implements RequestInterface
         }
 
         $this->lang = $lang;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPdf()
+    {
+        return $this->pdf;
+    }
+
+    /**
+     * @param bool $asPdf
+     * @return PrintAwb
+     */
+    public function setPdf(bool $asPdf)
+    {
+        $this->pdf = $asPdf;
         return $this;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Fancourier\Request;
 
-use Fancourier\Request\Traits\SendsFile;
 use Fancourier\Response\CreateAwb as CreateAwbResponse;
 
 /**
@@ -12,9 +11,8 @@ use Fancourier\Response\CreateAwb as CreateAwbResponse;
  */
 class CreateAwb extends AbstractRequest implements RequestInterface
 {
-    use SendsFile;
-
-    protected $verb = 'import_awb_integrat.php';
+    protected $resource = 'intern-awb';
+    protected $verb = 'post';
 
     protected $service = self::SERVICE_STANDARD;
     protected $bank = '';
@@ -56,62 +54,55 @@ class CreateAwb extends AbstractRequest implements RequestInterface
         $this->response = new CreateAwbResponse();
     }
 
-    public function getData()
-    {
-        return [
-            'Type of service' => $this->service,
-            'Bank' => $this->bank,
-            'IBAN' => $this->iban,
-            'Nr. of envelopes' => $this->envelopes,
-            'Nr. of parcels' => $this->parcels,
-            'Weight' => $this->weight,
-            'Payment of shipment' => $this->paymentType,
-            'Reimbursement' => $this->reimbursement,
-            'Reimbursement transport payment' => $this->reimbursementPaymentType,
-            'Declared Value' => $this->declaredValue,
-            'Contact person sender' => $this->sender,
-            'Observations' => $this->notes,
-            'Contains' => $this->contents,
-            'Recipient name' => $this->recipient,
-            'Contact person recipient' => $this->contactPerson,
-            'Phone' => $this->phone,
-            'Fax' => $this->fax,
-            'Email' => $this->email,
-            'County' => $this->region,
-            'Town' => $this->city,
-            'Street' => $this->street,
-            'Number' => $this->number,
-            'Postal Code' => $this->postalCode,
-            'Block(building)' => $this->building,
-            'Entrance' => $this->entrance,
-            'Floor' => $this->floor,
-            'Flat' => $this->apartment,
-            'Height of packet' => $this->height,
-            'Width of packet' => $this->length,
-            'Lenght of packet' => $this->width,
-            'refund' => $this->restitution,
-            'cost_center' => '',
-            'options' => $this->packOptions($this->getOptions()),
-            'packing' => '',
-            'recipient_info' => '',
-        ];
-    }
-
     public function pack()
     {
-        $data = $this->getData();
+        return [
+            'shipments' => [
+                [
+                    'info' => [
+                        'service' => $this->service,
+                        'bank' => $this->bank,
+                        'bankAccount' => $this->iban,
 
-        //need to write temporary csv
-        $file = @tempnam($this->getTempDir(), 'fc' . md5(json_encode($data)));
+                        'packages' => [
+                            'parcel' => $this->parcels,
+                            'envelope' => $this->envelopes,
+                        ],
 
-        if (false !== $f = fopen($file, 'w')) {
-            fputcsv($f, array_keys($data)); //',', chr(0)
-            fputcsv($f, array_values($data));
-            fclose($f);
-            return $file;
-        }
+                        'weight' => $this->weight,
+                        'cod' => $this->reimbursement,
+                        'declaredValue' => $this->declaredValue,
+                        'payment' => $this->paymentType,
+                        'refund' => $this->restitution,
+                        'returnPayment' => $this->reimbursementPaymentType,
+                        'observation' => $this->notes,
+                        'content' => $this->contents,
 
-        throw new \Exception("Could not create temporary awb file");
+                        'dimensions' => [
+                            'length' => $this->length,
+                            'height' => $this->height,
+                            'width' => $this->width,
+                        ],
+
+                        'costCenter' => '',
+                        'options' => $this->packOptions($this->getOptions()),
+                    ],
+                    'recipient' => [
+                        'name' => $this->recipient,
+                        'phone' => $this->phone,
+                        'email' => $this->email,
+                        'address' => [
+                            'county' => $this->region,
+                            'locality' => $this->city,
+                            'street' => $this->street,
+                            'streetNo' => $this->number,
+                            //'pickupLocation' => '', //only for fanbox
+                            'zipCode' => $this->postalCode,
+                        ],
+                    ],
+                ]
+            ],
+        ];
     }
 
     /**
@@ -296,6 +287,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return mixed
+     * @deprecated
      */
     public function getContactPerson()
     {
@@ -305,6 +297,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param mixed $contactPerson
      * @return CreateAwb
+     * @deprecated
      */
     public function setContactPerson($contactPerson)
     {
@@ -368,6 +361,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return mixed
+     * @deprecated
      */
     public function getSender()
     {
@@ -377,6 +371,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param mixed $sender
      * @return CreateAwb
+     * @deprecated
      */
     public function setSender($sender)
     {
@@ -404,6 +399,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getFax()
     {
@@ -413,6 +409,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param string $fax
      * @return CreateAwb
+     * @deprecated
      */
     public function setFax($fax)
     {
@@ -530,6 +527,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getBuilding()
     {
@@ -539,6 +537,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param string $building
      * @return CreateAwb
+     * @deprecated
      */
     public function setBuilding($building)
     {
@@ -548,6 +547,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getEntrance()
     {
@@ -557,6 +557,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param string $entrance
      * @return CreateAwb
+     * @deprecated
      */
     public function setEntrance($entrance)
     {
@@ -566,6 +567,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getFloor()
     {
@@ -575,6 +577,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param string $floor
      * @return CreateAwb
+     * @deprecated
      */
     public function setFloor($floor)
     {
@@ -584,6 +587,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     /**
      * @return string
+     * @deprecated
      */
     public function getApartment()
     {
@@ -593,6 +597,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     /**
      * @param string $apartment
      * @return CreateAwb
+     * @deprecated
      */
     public function setApartment($apartment)
     {
@@ -691,6 +696,25 @@ class CreateAwb extends AbstractRequest implements RequestInterface
         }
 
         $this->options = $opts;
+        return $this;
+    }
+
+    /**
+     * @return null
+     * @deprecated
+     */
+    public function getTempDir()
+    {
+        return null;
+    }
+
+    /**
+     * @param string $tempDir
+     * @return CreateAwb
+     * @deprecated
+     */
+    public function setTempDir($tempDir)
+    {
         return $this;
     }
 }

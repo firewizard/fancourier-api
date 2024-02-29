@@ -12,19 +12,27 @@ class CreateAwbBulk extends Generic implements ResponseInterface
             return $this;
         }
 
-        $this->body = [];
-
-        $body = preg_replace("/\r|\r\n/", "\n", trim($body));
-        foreach (explode("\n", $body) as $line) {
-            if (empty(trim($line))) {
-                continue;
-            }
-
-            $response = new CreateAwb();
-            $response->setBody($line);
-            $this->body[] = $response;
+        $body = json_decode($body, true);
+        if (empty($body['response'][0])) {
+            $this->setErrorMessage("Invalid response");
+            $this->setErrorCode(-2);
+            return $this;
         }
 
+        if (empty($body['response'][0]['awbNumber'])) {
+            $this->setErrorMessage(implode('; ', $body['response'][0]['errors'] ?? ['Unknown error']));
+            $this->setErrorCode(-3);
+            return $this;
+        }
+
+        $awbs = [];
+        foreach ($body['response'] as $response) {
+            if ($response['awbNumber']) {
+                $awbs[] = $response['awbNumber'];
+            }
+        }
+
+        parent::setBody($awbs);
         return $this;
     }
 }

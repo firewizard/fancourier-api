@@ -2,7 +2,6 @@
 
 namespace Fancourier\Request;
 
-use Fancourier\Request\Traits\SendsFile;
 use Fancourier\Response\CreateAwbBulk as CreateAwbBulkResponse;
 
 /**
@@ -10,17 +9,13 @@ use Fancourier\Response\CreateAwbBulk as CreateAwbBulkResponse;
  * @package Fancourier\Request
  * @SuppressWarnings(PHPMD)
  */
-class CreateAwbBulk extends AbstractRequest implements RequestInterface
+class CreateAwbBulk extends CreateAwb implements RequestInterface
 {
-    use SendsFile;
-
-    protected $verb = 'import_awb_integrat.php';
-
     protected $requests = [];
 
     public function __construct()
     {
-        parent::__construct();
+        AbstractRequest::__construct();
         $this->response = new CreateAwbBulkResponse();
     }
 
@@ -30,28 +25,13 @@ class CreateAwbBulk extends AbstractRequest implements RequestInterface
             throw new \Exception("Cannon create AWBs from an empty list");
         }
 
-        //need to write temporary csv
-        $file = @tempnam($this->getTempDir(), 'fc' . md5(serialize($this->requests)));
-
-        if (false === $f = fopen($file, 'w')) {
-            throw new \Exception("Could not create temporary awb file");
-        }
-
-        $writeHeader = true;
+        $finalPayload = ['shipments' => []];
         foreach ($this->requests as $request) {
-            /** @var CreateAwb $request */
-            $data = $request->getData();
-
-            if ($writeHeader) {
-                $writeHeader = false;
-                fputcsv($f, array_keys($data));
-            }
-
-            fputcsv($f, array_values($data));
+            $payload = $request->pack();
+            $finalPayload['shipments'][] = $payload['shipments'][0];
         }
 
-        fclose($f);
-        return $file;
+        return $finalPayload;
     }
 
     public function append(CreateAwb $request)

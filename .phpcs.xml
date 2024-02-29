@@ -4,6 +4,7 @@
     <file>src</file>
 
     <exclude-pattern>*/autoload.php</exclude-pattern>
+    <exclude-pattern>tests/*</exclude-pattern>
 
     <arg name="report" value="full"/>
     <arg name="colors"/>

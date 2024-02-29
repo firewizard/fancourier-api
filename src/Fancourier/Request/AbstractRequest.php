@@ -2,7 +2,6 @@
 
 namespace Fancourier\Request;
 
-use Fancourier\Auth;
 use Fancourier\Client;
 use Fancourier\Response\Generic;
 
@@ -36,12 +35,13 @@ abstract class AbstractRequest implements RequestInterface
     const OPTION_FANHQ = 4;
     const OPTION_SATURDAY = 8;
 
-    protected $endpoint = 'https://www.selfawb.ro/';
+    protected $endpoint = 'https://api.fancourier.ro/';
 
-    protected $verb;
+    protected $resource;
 
-    /** @var Auth */
-    protected $auth;
+    protected $verb = 'post';
+
+    protected $authToken;
 
     /** @var Client */
     protected $client;
@@ -55,28 +55,53 @@ abstract class AbstractRequest implements RequestInterface
         $this->response = new Generic();
     }
 
-    public function authenticate(Auth $auth)
+    protected function authenticate($username, $password)
     {
-        $this->auth = $auth;
+        $response = $this->client->post($this->endpoint . 'login', [
+            'username' => $username,
+            'password' => $password,
+        ]);
+
+        if ($response && ($response = json_decode($response, true))) {
+            if ('success' == $response['status'] && !empty($response['data']['token'])) {
+                $this->authToken = $response['data']['token'];
+            }
+        }
+
         return $this;
     }
 
     /**
      * @return Generic
      */
-    public function send()
+    public function send($username, $password, $clientId = null)
     {
-        if (empty($this->verb)) {
-            throw new \DomainException("No request verb implemented");
+        if (empty($this->resource)) {
+            throw new \DomainException("Resource not defined");
         }
 
-        $data = array_merge(
-            $this->auth->pack(),
-            $this->pack()
-        );
+        if (!in_array($this->verb, ['post', 'get', 'delete'])) {
+            throw new \DomainException("Invalid verb, should be post, get or delete");
+        }
 
-        $responseString = $this->client->post($this->endpoint . $this->verb, $data);
-        if (false === $responseString) {
+        if (empty($this->authToken)) {
+            $this->authenticate($username, $password);
+        }
+
+        if (empty($this->authToken)) {
+            throw new \Exception('Authentication failed');
+        }
+
+        $this->client->setBearerToken($this->authToken);
+
+        $data = $this->pack();
+
+        if ($clientId) {
+            $data['clientId'] = $clientId;
+        }
+
+        $responseString = $this->client->{$this->verb}($this->endpoint . ltrim($this->resource, '/'), $data);
+        if (!$responseString) {
             $this->response->setErrorCode(-1)->setErrorMessage($this->client->getError());
         } else {
             $this->response->setBody($responseString);
@@ -86,7 +111,7 @@ abstract class AbstractRequest implements RequestInterface
     }
 
     /**
-     * @return string
+     * @return array
      */
     protected function packOptions($options)
     {
@@ -109,6 +134,6 @@ abstract class AbstractRequest implements RequestInterface
             $opts[] = "S"; //'Livrare sambata';
         }
 
-        return count($opts) ? implode('', $opts) : '';
+        return $opts;
     }
 }

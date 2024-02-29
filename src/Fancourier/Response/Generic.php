@@ -58,7 +58,15 @@ class Generic implements ResponseInterface
      */
     public function setBody($body)
     {
-        $this->body = $body;
+        if (is_string($body)
+            && ($data = json_decode($body, true))
+            && !empty($data['status'])
+            && 'success' == $data['status']) {
+            $this->body = $data['data'];
+        } else {
+            $this->body = $body;
+        }
+
         return $this;
     }
 
