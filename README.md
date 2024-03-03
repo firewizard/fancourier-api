@@ -15,6 +15,9 @@
     - <a href="#delete-awb">Delete AWB</a>
     - <a href="#track-awb-in-bulk">Track AWB in bulk</a>
     - <a href="#get-cities">Get cities</a>
+    - <a href="#get-counties">Get counties</a>
+    - <a href="#get-services">Get services</a>
+- <a href="#features-not-implemented">Features not implemented</a>
 - <a href="#contributing">Contributing</a>
 - <a href="#license">License</a>
 

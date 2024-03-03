@@ -14,7 +14,6 @@ class TrackAwbBulk extends Generic implements ResponseInterface
         }
 
         parent::setBody($data['data']);
-
         return $this;
     }
 }
