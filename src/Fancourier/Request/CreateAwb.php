@@ -41,9 +41,9 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     protected $entrance = '';
     protected $floor = '';
     protected $apartment = '';
-    protected $height = 0;
-    protected $length = 0;
-    protected $width = 0;
+    protected $height = 0.1;
+    protected $length = 0.1;
+    protected $width = 0.1;
     protected $restitution = '';
 
     protected $options = 0;

@@ -2,6 +2,7 @@
 
 namespace Fancourier\Request;
 
+use Fancourier\AuthTokenCacheContract;
 use Fancourier\Client;
 use Fancourier\Response\Generic;
 
@@ -42,6 +43,7 @@ abstract class AbstractRequest implements RequestInterface
     protected $verb = 'post';
 
     protected $authToken;
+    protected $authTokenCache;
 
     /** @var Client */
     protected $client;
@@ -57,6 +59,13 @@ abstract class AbstractRequest implements RequestInterface
 
     protected function authenticate($username, $password)
     {
+        if ($this->authTokenCache) {
+            if ($token = $this->authTokenCache->get()) {
+                $this->authToken = $token;
+                return $this;
+            }
+        }
+
         $response = $this->client->post($this->endpoint . 'login', [
             'username' => $username,
             'password' => $password,
@@ -65,6 +74,10 @@ abstract class AbstractRequest implements RequestInterface
         if ($response && ($response = json_decode($response, true))) {
             if ('success' == $response['status'] && !empty($response['data']['token'])) {
                 $this->authToken = $response['data']['token'];
+
+                if ($this->authTokenCache) {
+                    $this->authTokenCache->set($this->authToken);
+                }
             }
         }
 
@@ -116,7 +129,7 @@ abstract class AbstractRequest implements RequestInterface
     protected function packOptions($options)
     {
         $options = (int)$options;
-        
+
         $opts = [];
         if ($options & static::OPTION_EPOD) {
             $opts[] = "X"; //'ePOD';
@@ -135,5 +148,11 @@ abstract class AbstractRequest implements RequestInterface
         }
 
         return $opts;
+    }
+
+    public function useAuthTokenCache(AuthTokenCacheContract $cache)
+    {
+        $this->authTokenCache = $cache;
+        return $this;
     }
 }

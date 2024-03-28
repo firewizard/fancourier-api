@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/Fancourier/AuthTokenCacheContract.php';
 require_once __DIR__ . '/Fancourier/Client.php';
 
 require_once __DIR__ . '/Fancourier/Response/ResponseInterface.php';

@@ -51,6 +51,37 @@ Or you can use the test instance static method:
 $fan = Fancourier\Fancourier::testInstance();
 ```
 
+### Caching the auth token
+By default, authentication is always called, which means for every regular request, 
+there will be an extra request to obtain the auth token. 
+You can fix this and cache the auth token in your app.
+
+First, you need to create a new class that implements `Fancourier\AuthTokenCacheContract`:
+```php
+class FancourierAuthCache implements AuthTokenCacheContract
+{
+    const CACHE_KEY = 'fancourier_auth_token';
+    const CACHE_LIFETIME = 43200; //12 hrs
+
+    public function get()
+    {
+        return Cache::get(static::CACHE_KEY);
+    }
+
+    public function set($value)
+    {
+        Cache::put(static::CACHE_KEY, $value, static::CACHE_LIFETIME);
+    }
+}
+```
+Then, pass this to the main Fancourier object:
+```php
+$api = new Fancourier(...);
+$api->useAuthTokenCache(new FancourierAuthCache());
+```
+
+*Note*: Tokens change every 24 hours according to Fan Courier, so might want to use a lower cache TTL.
+
 ### Get estimated shipping cost
 Request
 ```php

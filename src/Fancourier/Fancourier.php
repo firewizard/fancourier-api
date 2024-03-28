@@ -26,6 +26,8 @@ class Fancourier
     private $username;
     private $password;
 
+    private $authTokenCache;
+
     public function __construct($clientId, $username, $password)
     {
         $this->clientId = $clientId;
@@ -143,6 +145,10 @@ class Fancourier
      */
     protected function send(RequestInterface $request)
     {
+        if ($this->authTokenCache) {
+            $request->useAuthTokenCache($this->authTokenCache);
+        }
+
         return $request->send($this->username, $this->password, $this->clientId);
     }
 
@@ -153,5 +159,11 @@ class Fancourier
             self::TEST_USERNAME,
             self::TEST_PASSWORD
         );
+    }
+
+    public function useAuthTokenCache(AuthTokenCacheContract $cache)
+    {
+        $this->authTokenCache = $cache;
+        return $this;
     }
 }

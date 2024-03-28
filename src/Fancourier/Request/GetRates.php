@@ -15,9 +15,9 @@ class GetRates extends AbstractRequest implements RequestInterface
     private $envelopes = 0;
     private $parcels = 0;
     private $weight;
-    private $length = 0;
-    private $width = 0;
-    private $height = 0;
+    private $length = 0.1;
+    private $width = 0.1;
+    private $height = 0.1;
     private $declaredValue;
     private $reimbursementPaymentType = self::TYPE_RECIPIENT;
     private $options = '';
