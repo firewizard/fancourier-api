@@ -15,9 +15,9 @@ class GetRates extends AbstractRequest implements RequestInterface
     private $envelopes = 0;
     private $parcels = 0;
     private $weight;
-    private $length = 0.1;
-    private $width = 0.1;
-    private $height = 0.1;
+    private $length = 0;
+    private $width = 0;
+    private $height = 0;
     private $declaredValue;
     private $reimbursementPaymentType = self::TYPE_RECIPIENT;
     private $options = '';
@@ -31,17 +31,12 @@ class GetRates extends AbstractRequest implements RequestInterface
 
     public function pack()
     {
-        return [
+        $data = [
             'info' => [
                 'service' => $this->service,
                 'payment' => $this->paymentType,
                 'weight' => $this->weight,
                 'options' => $this->packOptions($this->getOptions()),
-                'dimensions' => [
-                    'length' => $this->length,
-                    'width' => $this->width,
-                    'height' => $this->height,
-                ],
                 'packages' => [
                     'parcel' => $this->parcels,
                     'envelope' => $this->envelopes,
@@ -57,6 +52,16 @@ class GetRates extends AbstractRequest implements RequestInterface
                 'county' => null,
             ],
         ];
+
+        if ($this->length * $this->width * $this->height > 0) {
+            $data['info']['dimensions'] = [
+                'length' => $this->length,
+                'width' => $this->width,
+                'height' => $this->height,
+            ];
+        }
+
+        return $data;
     }
 
     /**

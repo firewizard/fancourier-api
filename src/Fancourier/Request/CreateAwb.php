@@ -41,9 +41,9 @@ class CreateAwb extends AbstractRequest implements RequestInterface
     protected $entrance = '';
     protected $floor = '';
     protected $apartment = '';
-    protected $height = 0.1;
-    protected $length = 0.1;
-    protected $width = 0.1;
+    protected $height = 0;
+    protected $length = 0;
+    protected $width = 0;
     protected $restitution = '';
 
     protected $options = 0;
@@ -56,7 +56,7 @@ class CreateAwb extends AbstractRequest implements RequestInterface
 
     public function pack()
     {
-        return [
+        $data = [
             'shipments' => [
                 [
                     'info' => [
@@ -78,12 +78,6 @@ class CreateAwb extends AbstractRequest implements RequestInterface
                         'observation' => $this->notes,
                         'content' => $this->contents,
 
-                        'dimensions' => [
-                            'length' => $this->length,
-                            'height' => $this->height,
-                            'width' => $this->width,
-                        ],
-
                         'costCenter' => '',
                         'options' => $this->packOptions($this->getOptions()),
                     ],
@@ -103,6 +97,16 @@ class CreateAwb extends AbstractRequest implements RequestInterface
                 ]
             ],
         ];
+
+        if ($this->length * $this->width * $this->height > 0) {
+            $data['shipments'][0]['info']['dimensions'] = [
+                'length' => $this->length,
+                'width' => $this->width,
+                'height' => $this->height,
+            ];
+        }
+
+        return $data;
     }
 
     /**
